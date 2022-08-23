@@ -31,7 +31,7 @@ requirements:
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
-    - galaxy-containers >=21.A Day to Die0
+    - galaxy-containers >={{ galaxy_version }}
     - galaxy-util >={{ galaxy_version }}
     - typing_extensions
     - python >=3.6
