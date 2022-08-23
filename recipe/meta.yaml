@@ -33,6 +33,7 @@ requirements:
   run:
     - galaxy-containers >=20.5.0
     - galaxy-util >={{ galaxy_version }}
+    - typing_extensions
     - python >=3.6
     - whoosh
     - conda
