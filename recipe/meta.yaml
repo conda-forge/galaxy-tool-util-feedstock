@@ -27,21 +27,26 @@ build:
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python >=3.7
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
+    - python >=3.7
+    - conda
     - galaxy-containers >={{ galaxy_version }}
     - galaxy-util >={{ galaxy_version }}
+    - lxml
+    - pydantic
+    - pyyaml
+    - sortedcontainers
     - typing_extensions
-    - python >=3.6
     - whoosh
-    - conda
 
 test:
   imports:
     - galaxy
     - galaxy.tool_util
+    - galaxy.tool_util.biotools
     - galaxy.tool_util.cwl
     - galaxy.tool_util.deps
     - galaxy.tool_util.deps.container_resolvers
@@ -50,6 +55,10 @@ test:
     - galaxy.tool_util.linters
     - galaxy.tool_util.locations
     - galaxy.tool_util.parser
+    - galaxy.tool_util.toolbox
+    - galaxy.tool_util.toolbox.filters
+    - galaxy.tool_util.toolbox.lineages
+    - galaxy.tool_util.unittest_utils
     - galaxy.tool_util.verify
     - galaxy.tool_util.verify.asserts
   commands:
