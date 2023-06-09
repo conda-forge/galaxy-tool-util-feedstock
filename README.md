@@ -1,11 +1,11 @@
-About galaxy-tool-util
-======================
+About galaxy-tool-util-feedstock
+================================
+
+Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/galaxy-tool-util-feedstock/blob/main/LICENSE.txt)
 
 Home: https://galaxyproject.org
 
 Package license: AFL-3.0
-
-Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/galaxy-tool-util-feedstock/blob/main/LICENSE.txt)
 
 Summary: Galaxy Tool and Tool Dependency Utilities
 
