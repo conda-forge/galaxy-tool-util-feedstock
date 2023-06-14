@@ -32,12 +32,14 @@ requirements:
     - galaxy-util >={{ galaxy_version }}
   run:
     - python >=3.7
-    - conda
-    - galaxy-containers >={{ galaxy_version }}
+    - conda-package-streaming
     - galaxy-util >={{ galaxy_version }}
     - lxml
+    - markupsafe
+    - packaging <22
     - pydantic
     - pyyaml
+    - requests
     - sortedcontainers
     - typing_extensions
     - whoosh
