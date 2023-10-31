@@ -12,7 +12,7 @@ source:
 
 build:
   noarch: python
-  number: 0
+  number: 1
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - mulled-build=galaxy.tool_util.deps.mulled.mulled_build:main
@@ -36,7 +36,7 @@ requirements:
     - galaxy-util >={{ galaxy_version }}
     - lxml
     - markupsafe
-    - packaging <22
+    - packaging
     - pydantic <2
     - pyyaml
     - requests
