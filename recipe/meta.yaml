@@ -1,5 +1,5 @@
-{% set version = "23.1.1" %}
-{% set sha256 = "558ee91e05a9f69517464f45a25f59cfd32b12db9ed8e98c4fe7adc58f96b378" %}
+{% set version = "23.1.2" %}
+{% set sha256 = "236917ad82dea145d51aff11b597813fdcf1396af26931a5cffda29fe12ecc3b" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -12,7 +12,7 @@ source:
 
 build:
   noarch: python
-  number: 1
+  number: 0
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - mulled-build=galaxy.tool_util.deps.mulled.mulled_build:main
@@ -31,9 +31,10 @@ requirements:
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
+    - typing-extensions
     - python >=3.7
     - conda-package-streaming
-    - galaxy-util >={{ galaxy_version }}
+    - galaxy-util >=22.1
     - lxml
     - markupsafe
     - packaging
