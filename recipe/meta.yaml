@@ -31,10 +31,9 @@ requirements:
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
-    - typing-extensions
     - python >=3.7
     - conda-package-streaming
-    - galaxy-util >=22.1
+    - galaxy-util >={{ galaxy_version }}
     - lxml
     - markupsafe
     - packaging
