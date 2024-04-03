@@ -37,7 +37,7 @@ requirements:
     - lxml
     - markupsafe
     - packaging
-    - pydantic <2
+    - pydantic >=2
     - pyyaml
     - requests
     - sortedcontainers
