@@ -28,6 +28,7 @@ requirements:
   host:
     - pip
     - python >=3.7
+    - setuptools
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
