@@ -72,7 +72,7 @@ test:
   commands:
     - galaxy-tool-test --help
     - galaxy-tool-test-case-validation --help
-    - galaxy-tool-upgrade-advisor --help
+    # - galaxy-tool-upgrade-advisor --help  # Can be restored after https://github.com/galaxyproject/galaxy/pull/19605
     - validate-test-format --help
     - mulled-build --help
     - mulled-build-channel --help
