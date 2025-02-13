@@ -1,5 +1,5 @@
-{% set version = "24.1.4" %}
-{% set sha256 = "380bbda6f7c42bfa8f044d8ed5f857a381b9bfbeeed580adaded44b27df2610a" %}
+{% set version = "24.2.0" %}
+{% set sha256 = "dd0261031eae7cdeb1b238cc13f4d27f32e4db52a3dcc53f31a7a34b129b04e7" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -15,6 +15,9 @@ build:
   number: 0
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
+    - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
+    - galaxy-tool-upgrade-advisor=galaxy.tool_util.upgrade.script:main
+    - validate-test-format=galaxy.tool_util.validate_test_format:main
     - mulled-build=galaxy.tool_util.deps.mulled.mulled_build:main
     - mulled-build-channel=galaxy.tool_util.deps.mulled.mulled_build_channel:main
     - mulled-search=galaxy.tool_util.deps.mulled.mulled_search:main
@@ -68,6 +71,9 @@ test:
     - galaxy.tool_util.verify.asserts
   commands:
     - galaxy-tool-test --help
+    - galaxy-tool-test-case-validation --help
+    # - galaxy-tool-upgrade-advisor --help  # Can be restored after https://github.com/galaxyproject/galaxy/pull/19605
+    - validate-test-format --help
     - mulled-build --help
     - mulled-build-channel --help
     - mulled-search --help
