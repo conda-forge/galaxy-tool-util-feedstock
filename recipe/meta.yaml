@@ -37,6 +37,7 @@ requirements:
   run:
     - python >={{ python_min }}
     - conda-package-streaming
+    - galaxy-tool-util-models >={{ galaxy_version }}
     - galaxy-util >={{ galaxy_version }}
     - lxml
     - markupsafe
@@ -55,18 +56,26 @@ test:
     - galaxy
     - galaxy.tool_util
     - galaxy.tool_util.biotools
+    - galaxy.tool_util.client
     - galaxy.tool_util.cwl
+    - galaxy.tool_util.data
+    - galaxy.tool_util.data.bundles
     - galaxy.tool_util.deps
     - galaxy.tool_util.deps.container_resolvers
     - galaxy.tool_util.deps.mulled
     - galaxy.tool_util.deps.resolvers
     - galaxy.tool_util.linters
     - galaxy.tool_util.locations
+    - galaxy.tool_util.ontologies
+    - galaxy.tool_util.parameters
+    - galaxy.tool_util.parameters.scripts
     - galaxy.tool_util.parser
     - galaxy.tool_util.toolbox
     - galaxy.tool_util.toolbox.filters
     - galaxy.tool_util.toolbox.lineages
+    - galaxy.tool_util.toolbox.views
     - galaxy.tool_util.unittest_utils
+    - galaxy.tool_util.upgrade
     - galaxy.tool_util.verify
     - galaxy.tool_util.verify.asserts
   commands:
