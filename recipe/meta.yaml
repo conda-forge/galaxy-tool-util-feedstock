@@ -1,5 +1,5 @@
-{% set version = "25.0.1" %}
-{% set sha256 = "14275c975427b48c9df7cfb28de697ccfa19e02093eb8bd04fc538bab9a09fa2" %}
+{% set version = "25.0.2" %}
+{% set sha256 = "06ea221c5cb96adb01e945b4754afbfcb3e02db90cd5eefff835bd553b899d71" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
