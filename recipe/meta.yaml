@@ -1,5 +1,5 @@
-{% set version = "25.1.0" %}
-{% set sha256 = "ab7395a1cee3cc823b951d83946dcc9af1eb16b2788ef2b3353006022c2eb1d3" %}
+{% set version = "25.1.1" %}
+{% set sha256 = "06d215b352aa821a11d18ab13c350042c6911bcd78000342e5e6efb374d4960b" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -42,7 +42,7 @@ requirements:
     - lxml
     - markupsafe
     - packaging
-    - pydantic >=2
+    - pydantic >=2.7.4
     - pyyaml
     - requests
     - sortedcontainers
