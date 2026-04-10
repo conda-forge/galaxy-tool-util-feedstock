@@ -94,7 +94,8 @@ test:
 
 about:
   home: https://galaxyproject.org
-  license: AFL-3.0
+  license: MIT
+  license_family: MIT
   license_file: LICENSE
   summary: Galaxy Tool and Tool Dependency Utilities
   doc_url: https://docs.galaxyproject.org
