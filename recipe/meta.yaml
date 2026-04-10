@@ -1,5 +1,5 @@
-{% set version = "25.1.2" %}
-{% set sha256 = "be8fb23188119249b7d778c8e53358628430b6fa8678a82eb2e0bfe747c9523f" %}
+{% set version = "26.0.0" %}
+{% set sha256 = "a9d1bfe2b7132dc386e560b6dfdfea6a2e3f02e01a19d34c692acc7e2506e8d4" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -94,7 +94,8 @@ test:
 
 about:
   home: https://galaxyproject.org
-  license: AFL-3.0
+  license: MIT
+  license_family: MIT
   license_file: LICENSE
   summary: Galaxy Tool and Tool Dependency Utilities
   doc_url: https://docs.galaxyproject.org
