@@ -12,7 +12,7 @@ source:
 
 build:
   noarch: python
-  number: 0
+  number: 1
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
@@ -24,6 +24,7 @@ build:
     - mulled-build-tool=galaxy.tool_util.deps.mulled.mulled_build_tool:main
     - mulled-build-files=galaxy.tool_util.deps.mulled.mulled_build_files:main
     - mulled-list=galaxy.tool_util.deps.mulled.mulled_list:main
+    - mulled-hash=galaxy.tool_util.deps.mulled.mulled_hash:main
     - mulled-update-singularity-containers=galaxy.tool_util.deps.mulled.mulled_update_singularity_containers:main
   script: {{ PYTHON }} -m pip install . --no-deps -vv
 
@@ -85,6 +86,7 @@ test:
     - validate-test-format --help
     - mulled-build --help
     - mulled-build-channel --help
+    - mulled-hash --help
     - mulled-search --help
     - mulled-search -s bwa
     - mulled-build-tool --help
