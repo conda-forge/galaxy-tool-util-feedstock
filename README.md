@@ -5,7 +5,7 @@ Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/galaxy-tool-uti
 
 Home: https://galaxyproject.org
 
-Package license: AFL-3.0
+Package license: MIT
 
 Summary: Galaxy Tool and Tool Dependency Utilities
 
