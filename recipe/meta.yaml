@@ -1,5 +1,5 @@
-{% set version = "26.0.0" %}
-{% set sha256 = "a9d1bfe2b7132dc386e560b6dfdfea6a2e3f02e01a19d34c692acc7e2506e8d4" %}
+{% set version = "26.0.1" %}
+{% set sha256 = "6048ca408812527fbf4c68f9881b2d48bc5d6542b7a537f81b707f5bbc9a3bd3" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -12,7 +12,7 @@ source:
 
 build:
   noarch: python
-  number: 1
+  number: 0
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
