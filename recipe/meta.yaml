@@ -12,20 +12,21 @@ source:
 
 build:
   noarch: python
-  number: 0
+  number: 1
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
     - galaxy-tool-upgrade-advisor=galaxy.tool_util.upgrade.script:main
-    - validate-test-format=galaxy.tool_util.validate_test_format:main
     - mulled-build=galaxy.tool_util.deps.mulled.mulled_build:main
     - mulled-build-channel=galaxy.tool_util.deps.mulled.mulled_build_channel:main
-    - mulled-search=galaxy.tool_util.deps.mulled.mulled_search:main
-    - mulled-build-tool=galaxy.tool_util.deps.mulled.mulled_build_tool:main
     - mulled-build-files=galaxy.tool_util.deps.mulled.mulled_build_files:main
-    - mulled-list=galaxy.tool_util.deps.mulled.mulled_list:main
+    - mulled-build-tool=galaxy.tool_util.deps.mulled.mulled_build_tool:main
     - mulled-hash=galaxy.tool_util.deps.mulled.mulled_hash:main
+    - mulled-list=galaxy.tool_util.deps.mulled.mulled_list:main
+    - mulled-recommend=galaxy.tool_util.deps.mulled.recommend:main
+    - mulled-search=galaxy.tool_util.deps.mulled.mulled_search:main
     - mulled-update-singularity-containers=galaxy.tool_util.deps.mulled.mulled_update_singularity_containers:main
+    - validate-test-format=galaxy.tool_util.validate_test_format:main
   script: {{ PYTHON }} -m pip install . --no-deps -vv
 
 requirements:
@@ -33,6 +34,7 @@ requirements:
     - pip
     - python {{ python_min }}
     - setuptools
+    - setuptools-scm >=8
     # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
     - galaxy-util >={{ galaxy_version }}
   run:
@@ -88,7 +90,8 @@ test:
     - mulled-build-channel --help
     - mulled-hash --help
     - mulled-search --help
-    - mulled-search -s bwa
+    # Temporarily disable test due to depot.galaxyproject.org "Read timed out" errors.
+    # - mulled-search -s bwa
     - mulled-build-tool --help
     - mulled-build-files --help
     - mulled-list --help
