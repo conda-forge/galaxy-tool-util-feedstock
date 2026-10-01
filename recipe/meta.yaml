@@ -12,7 +12,7 @@ source:
 
 build:
   noarch: python
-  number: 1
+  number: 2
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
@@ -42,6 +42,7 @@ requirements:
     - conda-package-streaming
     - galaxy-tool-util-models >={{ galaxy_version }}
     - galaxy-util >={{ galaxy_version }}
+    - jsonschema
     - lxml
     - markupsafe
     - packaging
