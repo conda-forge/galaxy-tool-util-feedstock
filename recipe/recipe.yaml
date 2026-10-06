@@ -1,0 +1,117 @@
+schema_version: 1
+
+context:
+  version: "26.1.1"
+  galaxy_version: ${{ (version | split("."))[:2] | join(".") }}
+
+package:
+  name: galaxy-tool-util
+  version: ${{ version }}
+
+source:
+  url: https://pypi.org/packages/source/g/galaxy-tool-util/galaxy_tool_util-${{ version }}.tar.gz
+  sha256: 92ab041c1388d11f35779a7db20464f3666f3c2b975e71bba84ca4c630ec99a1
+
+build:
+  number: 2
+  noarch: python
+  script: ${{ PYTHON }} -m pip install . --no-deps -vv
+  python:
+    entry_points:
+      - galaxy-tool-test=galaxy.tool_util.verify.script:main
+      - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
+      - galaxy-tool-upgrade-advisor=galaxy.tool_util.upgrade.script:main
+      - mulled-build=galaxy.tool_util.deps.mulled.mulled_build:main
+      - mulled-build-channel=galaxy.tool_util.deps.mulled.mulled_build_channel:main
+      - mulled-build-files=galaxy.tool_util.deps.mulled.mulled_build_files:main
+      - mulled-build-tool=galaxy.tool_util.deps.mulled.mulled_build_tool:main
+      - mulled-hash=galaxy.tool_util.deps.mulled.mulled_hash:main
+      - mulled-list=galaxy.tool_util.deps.mulled.mulled_list:main
+      - mulled-recommend=galaxy.tool_util.deps.mulled.recommend:main
+      - mulled-search=galaxy.tool_util.deps.mulled.mulled_search:main
+      - mulled-update-singularity-containers=galaxy.tool_util.deps.mulled.mulled_update_singularity_containers:main
+      - validate-test-format=galaxy.tool_util.validate_test_format:main
+
+requirements:
+  host:
+    - pip
+    - python ${{ python_min }}.*
+    - setuptools
+    - setuptools-scm >=8
+    # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
+    - galaxy-util >=${{ galaxy_version }}
+  run:
+    - python >=${{ python_min }}
+    - conda-package-streaming
+    - galaxy-tool-util-models >=${{ galaxy_version }}
+    - galaxy-util >=${{ galaxy_version }}
+    - jsonschema
+    - lxml
+    - markupsafe
+    - packaging
+    - pydantic >=2.7.4
+    - pyyaml
+    - requests
+    - sortedcontainers
+    - typing_extensions
+    - whoosh
+
+tests:
+  - python:
+      imports:
+        - galaxy
+        - galaxy.tool_util
+        - galaxy.tool_util.biotools
+        - galaxy.tool_util.client
+        - galaxy.tool_util.cwl
+        - galaxy.tool_util.data
+        - galaxy.tool_util.data.bundles
+        - galaxy.tool_util.deps
+        - galaxy.tool_util.deps.container_resolvers
+        - galaxy.tool_util.deps.mulled
+        - galaxy.tool_util.deps.resolvers
+        - galaxy.tool_util.linters
+        - galaxy.tool_util.locations
+        - galaxy.tool_util.ontologies
+        - galaxy.tool_util.parameters
+        - galaxy.tool_util.parameters.scripts
+        - galaxy.tool_util.parser
+        - galaxy.tool_util.toolbox
+        - galaxy.tool_util.toolbox.filters
+        - galaxy.tool_util.toolbox.lineages
+        - galaxy.tool_util.toolbox.views
+        - galaxy.tool_util.unittest_utils
+        - galaxy.tool_util.upgrade
+        - galaxy.tool_util.verify
+        - galaxy.tool_util.verify.asserts
+      python_version:
+        - ${{ python_min }}.*
+        - "*"
+  - requirements:
+      run:
+        - python ${{ python_min }}.*
+    script:
+      - galaxy-tool-test --help
+      - galaxy-tool-test-case-validation --help
+      - validate-test-format --help
+      - mulled-build --help
+      - mulled-build-channel --help
+      - mulled-hash --help
+      - mulled-search --help
+      - mulled-build-tool --help
+      - mulled-build-files --help
+      - mulled-list --help
+      - mulled-update-singularity-containers --help
+
+about:
+  license: MIT
+  license_file: LICENSE
+  summary: Galaxy Tool and Tool Dependency Utilities
+  homepage: https://galaxyproject.org
+  repository: https://github.com/galaxyproject/galaxy
+  documentation: https://docs.galaxyproject.org
+
+extra:
+  recipe-maintainers:
+    - nsoranzo
+    - bgruening
