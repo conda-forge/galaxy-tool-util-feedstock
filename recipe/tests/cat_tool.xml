@@ -1,0 +1,22 @@
+<tool id="cat1" name="Concatenate" version="1.0.0" profile="16.04">
+    <requirements>
+        <requirement type="package" version="9.5">coreutils</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[cat '$input1' > '$out_file1']]></command>
+    <inputs>
+        <param name="input1" type="data" format="txt" label="Input"/>
+    </inputs>
+    <outputs>
+        <data name="out_file1" format="txt"/>
+    </outputs>
+    <tests>
+        <test>
+            <param name="input1" value="1.txt"/>
+            <output name="out_file1" file="1.txt"/>
+        </test>
+    </tests>
+    <help>Concatenate a file.</help>
+    <citations>
+        <citation type="doi">10.1093/nar/gky379</citation>
+    </citations>
+</tool>

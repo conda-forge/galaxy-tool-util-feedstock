@@ -18,6 +18,7 @@ build:
   script: ${{ PYTHON }} -m pip install . --no-deps -vv
   python:
     entry_points:
+      - galaxy-tool-format=galaxy.tool_util.format:main
       - galaxy-tool-test=galaxy.tool_util.verify.script:main
       - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
       - galaxy-tool-upgrade-advisor=galaxy.tool_util.upgrade.script:main
@@ -38,8 +39,6 @@ requirements:
     - python ${{ python_min }}.*
     - setuptools
     - setuptools-scm >=8
-    # Depend on galaxy-util during build time to avoid packaging galaxy/__init__.py .
-    - galaxy-util >=${{ galaxy_version }}
   run:
     - python >=${{ python_min }}
     - conda-package-streaming
@@ -54,54 +53,98 @@ requirements:
     - requests
     - sortedcontainers
     - typing_extensions
+    # The `mulled` extra, used by the mulled-* scripts.
+    - jinja2
     - whoosh
 
 tests:
   - python:
       imports:
-        - galaxy
         - galaxy.tool_util
-        - galaxy.tool_util.biotools
-        - galaxy.tool_util.client
-        - galaxy.tool_util.cwl
-        - galaxy.tool_util.data
-        - galaxy.tool_util.data.bundles
-        - galaxy.tool_util.deps
-        - galaxy.tool_util.deps.container_resolvers
-        - galaxy.tool_util.deps.mulled
-        - galaxy.tool_util.deps.resolvers
-        - galaxy.tool_util.linters
-        - galaxy.tool_util.locations
-        - galaxy.tool_util.ontologies
-        - galaxy.tool_util.parameters
-        - galaxy.tool_util.parameters.scripts
-        - galaxy.tool_util.parser
-        - galaxy.tool_util.toolbox
-        - galaxy.tool_util.toolbox.filters
-        - galaxy.tool_util.toolbox.lineages
-        - galaxy.tool_util.toolbox.views
-        - galaxy.tool_util.unittest_utils
-        - galaxy.tool_util.upgrade
-        - galaxy.tool_util.verify
-        - galaxy.tool_util.verify.asserts
+        - galaxy.tool_util.deps.mulled.mulled_search
+        - galaxy.tool_util.deps.mulled.get_tests
+      pip_check: true
       python_version:
         - ${{ python_min }}.*
         - "*"
-  - requirements:
+  - files:
+      recipe:
+        - tests/
+    requirements:
       run:
         - python ${{ python_min }}.*
     script:
+      # Biocontainers image names are derived from this hash, so it must never change.
+      - test "$(mulled-hash samtools=1.3.1,bedtools=2.26.0-0)" = "mulled-v2-8186960447c5cb2faa697666dc1e6d919ad23f3e:98f9ef83a1a2f8e26e5b3851cb457baa3ce764d0"
+      - galaxy-tool-test-case-validation tests/cat_tool.xml
+      - validate-test-format tests/cat_tool-tests.yml
+      - sed 's/class. File/class. Nope/' tests/cat_tool-tests.yml > invalid-tests.yml
+      - "! validate-test-format invalid-tests.yml"
+      - test -z "$(galaxy-tool-format --diff tests/cat_tool.xml)"
+      - galaxy-tool-upgrade-advisor -p 20.09 tests/cat_tool.xml | grep -q "set -e"
+      # The remaining scripts need docker, singularity or the network.
       - galaxy-tool-test --help
-      - galaxy-tool-test-case-validation --help
-      - validate-test-format --help
       - mulled-build --help
       - mulled-build-channel --help
-      - mulled-hash --help
-      - mulled-search --help
-      - mulled-build-tool --help
       - mulled-build-files --help
+      - mulled-build-tool --help
       - mulled-list --help
+      - mulled-recommend --help
+      - mulled-search --help
       - mulled-update-singularity-containers --help
+  - files:
+      source:
+        - tests/
+    requirements:
+      run:
+        - python ${{ python_min }}.*
+        - pytest
+        - pytest-mock
+        - beaker
+        - numpy
+        - pillow
+        - tifffile
+    script:
+      # Run against the installed package, not upstream's pytest.ini (pythonpath = src).
+      # The ignored modules need tool fixtures from the Galaxy monorepo that the sdist
+      # lacks, cwltool (which depends on this package), or edam-ontology/pysam (not on
+      # conda-forge); the deselected tests need docker, singularity or the network.
+      - >-
+        pytest tests -c /dev/null -p no:cacheprovider
+        --ignore=tests/tool_util/data/test_tool_data_bundles.py
+        --ignore=tests/tool_util/mulled/test_get_tests.py
+        --ignore=tests/tool_util/mulled/test_mulled_build.py
+        --ignore=tests/tool_util/mulled/test_mulled_search.py
+        --ignore=tests/tool_util/mulled/test_mulled_update_singularity_containers.py
+        --ignore=tests/tool_util/test_conda_resolution.py
+        --ignore=tests/tool_util/test_container_resolution.py
+        --ignore=tests/tool_util/test_container_shape_lint.py
+        --ignore=tests/tool_util/test_credential_parsing.py
+        --ignore=tests/tool_util/test_cwl.py
+        --ignore=tests/tool_util/test_edam_util.py
+        --ignore=tests/tool_util/test_input_models.py
+        --ignore=tests/tool_util/test_output_models.py
+        --ignore=tests/tool_util/test_parameter_convert.py
+        --ignore=tests/tool_util/test_parameter_cwl_runtime_model.py
+        --ignore=tests/tool_util/test_parameter_specification.py
+        --ignore=tests/tool_util/test_parameter_specification_json_schema.py
+        --ignore=tests/tool_util/test_parameter_test_cases.py
+        --ignore=tests/tool_util/test_parsed_tool_model.py
+        --ignore=tests/tool_util/test_parsing.py
+        --ignore=tests/tool_util/test_test_definition_parsing.py
+        --ignore=tests/tool_util/test_tool_linters.py
+        --ignore=tests/tool_util/test_user_tool_source_fixtures.py
+        --ignore=tests/tool_util/upgrade/test_upgrade_advice.py
+        -k "not live and not singularity and not namespace_missing"
+  - package_contents:
+      strict: true
+      site_packages:
+        - galaxy.tool_util
+        - galaxy.tool_util.deps.mulled
+      files:
+        - site-packages/galaxy/tool_util/**
+        - site-packages/galaxy_tool_util-${{ version }}.dist-info/**
+        - etc/conda/test-files/galaxy-tool-util/**
 
 about:
   license: MIT

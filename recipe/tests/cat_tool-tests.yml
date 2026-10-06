@@ -1,0 +1,10 @@
+- doc: Concatenate a single file
+  job:
+    input1:
+      class: File
+      path: 1.txt
+  outputs:
+    out_file1:
+      asserts:
+        - that: has_text
+          text: hello
