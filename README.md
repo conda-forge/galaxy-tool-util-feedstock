@@ -3,7 +3,7 @@ About galaxy-tool-util-feedstock
 
 Feedstock license: [BSD-3-Clause](https://github.com/conda-forge/galaxy-tool-util-feedstock/blob/main/LICENSE.txt)
 
-Home: https://galaxyproject.org
+Home: https://galaxyproject.org/
 
 Package license: MIT
 
@@ -11,7 +11,7 @@ Summary: Galaxy Tool and Tool Dependency Utilities
 
 Development: https://github.com/galaxyproject/galaxy
 
-Documentation: https://docs.galaxyproject.org
+Documentation: https://docs.galaxyproject.org/
 
 Current build status
 ====================
