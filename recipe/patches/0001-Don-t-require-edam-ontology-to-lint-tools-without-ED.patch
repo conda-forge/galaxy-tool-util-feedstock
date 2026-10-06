@@ -1,0 +1,98 @@
+From d391b62c1d377c3d6c748442b4c1946fc191f87b Mon Sep 17 00:00:00 2001
+From: Chris Burr <christopher.burr@cern.ch>
+Date: Tue, 6 Oct 2026 16:26:45 +0200
+Subject: [PATCH 1/2] Don't require edam-ontology to lint tools without EDAM
+ terms
+
+edam-ontology is an optional dependency (the `edam` extra), but the
+EDAMTermsValid linter loaded the EDAM tree unconditionally, so linting
+any tool with the default linters raised an AssertionError when it was
+not installed. Only load the tree when the tool declares EDAM terms, and
+report an info message instead of crashing when they cannot be checked.
+---
+ lib/galaxy/tool_util/linters/general.py  | 13 +++++++++++--
+ test/unit/tool_util/test_tool_linters.py | 21 +++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 2 deletions(-)
+
+diff --git a/src/galaxy/tool_util/linters/general.py b/src/galaxy/tool_util/linters/general.py
+index 624c18f7..65fecb39 100644
+--- a/src/galaxy/tool_util/linters/general.py
++++ b/src/galaxy/tool_util/linters/general.py
+@@ -8,8 +8,8 @@ from typing import (
+ 
+ from packaging.version import Version
+ 
++from galaxy.tool_util import edam_util
+ from galaxy.tool_util.biotools.source import ApiBiotoolsMetadataSource
+-from galaxy.tool_util.edam_util import load_edam_tree
+ from galaxy.tool_util.lint import Linter
+ from galaxy.tool_util.version import (
+     LegacyVersion,
+@@ -248,8 +248,17 @@ class EDAMTermsValid(Linter):
+     @classmethod
+     def lint(cls, tool_source: "ToolSource", lint_ctx: "LintContext"):
+         _, tool_node = _tool_xml_and_root(tool_source)
+-        edam = load_edam_tree(None, "operation_", "topic_")
+         terms = tool_source.parse_edam_operations() + tool_source.parse_edam_topics()
++        if not terms:
++            return
++        if edam_util.tabular_stream is None:
++            lint_ctx.info(
++                "Skipping EDAM term validation, the optional edam-ontology package is not installed.",
++                linter=cls.name(),
++                node=tool_node,
++            )
++            return
++        edam = edam_util.load_edam_tree(None, "operation_", "topic_")
+         for term in terms:
+             if term not in edam:
+                 lint_ctx.warn(f"No entry '{term}' in EDAM.", linter=cls.name(), node=tool_node)
+diff --git a/tests/tool_util/test_tool_linters.py b/tests/tool_util/test_tool_linters.py
+index 57b7ba63..31cf92a7 100644
+--- a/tests/tool_util/test_tool_linters.py
++++ b/tests/tool_util/test_tool_linters.py
+@@ -5,6 +5,7 @@ import tempfile
+ import pytest
+ 
+ import galaxy.tool_util.linters
++from galaxy.tool_util import edam_util
+ from galaxy.tool_util.lint import (
+     lint_tool_source_with,
+     lint_tool_source_with_modules,
+@@ -1415,6 +1416,25 @@ def test_general_valid_biotools(lint_ctx):
+     assert not lint_ctx.error_messages
+ 
+ 
++def test_general_edam_without_edam_ontology(lint_ctx, monkeypatch):
++    monkeypatch.setattr(edam_util, "tabular_stream", None)
++    tool_source = get_xml_tool_source(GENERAL_VALID_EDAM)
++    run_lint_module(lint_ctx, general, tool_source)
++    assert (
++        "Skipping EDAM term validation, the optional edam-ontology package is not installed." in lint_ctx.info_messages
++    )
++    assert not any("EDAM" in m for m in lint_ctx.warn_messages)
++
++
++def test_general_no_edam_terms_without_edam_ontology(lint_ctx, monkeypatch):
++    monkeypatch.setattr(edam_util, "tabular_stream", None)
++    tool_source = get_xml_tool_source(TOOL_WITH_COMMENTS)
++    run_lint_module(lint_ctx, general, tool_source)
++    assert not lint_ctx.info_messages
++    assert not lint_ctx.warn_messages
++    assert not lint_ctx.error_messages
++
++
+ def test_general_text_spaces_comments(lint_ctx):
+     tool_source = get_xml_tool_source(TOOL_WITH_COMMENTS)
+     run_lint_module(lint_ctx, general, tool_source)
+@@ -1424,6 +1444,7 @@ def test_general_text_spaces_comments(lint_ctx):
+     assert not lint_ctx.error_messages
+ 
+ 
++@pytest.mark.skipif(edam_util.tabular_stream is None, reason="edam-ontology is not installed")
+ def test_general_valid_edam(lint_ctx):
+     tool_source = get_xml_tool_source(GENERAL_VALID_EDAM)
+     run_lint_module(lint_ctx, general, tool_source)
+-- 
+2.55.0
+

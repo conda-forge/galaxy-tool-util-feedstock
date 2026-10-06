@@ -1,0 +1,62 @@
+From c31b0fdbbeb5f0f29c50678c37bb4a857fc8aee7 Mon Sep 17 00:00:00 2001
+From: Chris Burr <christopher.burr@cern.ch>
+Date: Tue, 6 Oct 2026 16:27:14 +0200
+Subject: [PATCH 2/2] Fix galaxy-tool-upgrade-advisor --json
+
+json.dumps() was passed a generator, so --json always failed with
+"TypeError: Object of type generator is not JSON serializable".
+---
+ lib/galaxy/tool_util/upgrade/script.py             | 2 +-
+ test/unit/tool_util/upgrade/test_upgrade_advice.py | 9 +++++++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/galaxy/tool_util/upgrade/script.py b/src/galaxy/tool_util/upgrade/script.py
+index 2778fc40..4ecc116d 100755
+--- a/src/galaxy/tool_util/upgrade/script.py
++++ b/src/galaxy/tool_util/upgrade/script.py
+@@ -78,7 +78,7 @@ def advise(xml_file: str, version: str, json: bool, niche: bool):
+     if not niche:
+         advice_list = [a for a in advice_list if not a.niche]
+     if json:
+-        print(dumps(a.to_dict() for a in advice_list))
++        print(dumps([a.to_dict() for a in advice_list]))
+     else:
+         _print_advice_list(advice_list)
+ 
+diff --git a/tests/tool_util/upgrade/test_upgrade_advice.py b/tests/tool_util/upgrade/test_upgrade_advice.py
+index 3fbd0635..bdae6de0 100644
+--- a/tests/tool_util/upgrade/test_upgrade_advice.py
++++ b/tests/tool_util/upgrade/test_upgrade_advice.py
+@@ -1,6 +1,7 @@
+ # Not yet tested:
+ # - 21_09_fix_from_work_dir_whitespace
+ # - 23_0_consider_optional_text
++import json
+ import os
+ from typing import List
+ 
+@@ -12,6 +13,7 @@ from galaxy.tool_util.upgrade import (
+     advise_on_upgrade,
+     TARGET_TOO_NEW,
+ )
++from galaxy.tool_util.upgrade.script import main
+ 
+ FUTURE_GALAXY_VERSION = "29.6"
+ 
+@@ -23,6 +25,13 @@ def test_does_not_work_on_non_xml_tools():
+     assert "XML tools" in str(e)
+ 
+ 
++def test_script_json_output(capsys):
++    main(["--json", "--profile-version", "20.09", _tool_path("simple_constructs.xml")])
++    advice = json.loads(capsys.readouterr().out)
++    assert isinstance(advice, list)
++    assert advice
++
++
+ def test_does_not_work_on_versions_too_new():
+     simple_constructs = _tool_path("simple_constructs.xml")
+     with pytest.raises(Exception) as e:
+-- 
+2.55.0
+

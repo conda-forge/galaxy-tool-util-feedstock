@@ -11,6 +11,13 @@ package:
 source:
   url: https://pypi.org/packages/source/g/galaxy-tool-util/galaxy_tool_util-${{ version }}.tar.gz
   sha256: 92ab041c1388d11f35779a7db20464f3666f3c2b975e71bba84ca4c630ec99a1
+  patches:
+    # Linting any tool raised an AssertionError unless the optional edam-ontology
+    # (not on conda-forge) was installed. Proposed upstream against release_26.1.
+    - patches/0001-Don-t-require-edam-ontology-to-lint-tools-without-ED.patch
+    # `galaxy-tool-upgrade-advisor --json` passed a generator to json.dumps().
+    # Proposed upstream against release_26.1.
+    - patches/0002-Fix-galaxy-tool-upgrade-advisor-json.patch
 
 build:
   number: 2
@@ -81,7 +88,11 @@ tests:
       - sed 's/class. File/class. Nope/' tests/cat_tool-tests.yml > invalid-tests.yml
       - "! validate-test-format invalid-tests.yml"
       - test -z "$(galaxy-tool-format --diff tests/cat_tool.xml)"
+      - python -c "import sys; from galaxy.tool_util.lint import lint_tool_source; from galaxy.tool_util.parser import get_tool_source; sys.exit(not lint_tool_source(get_tool_source('tests/cat_tool.xml')))"
+      - sed 's/ id="cat1"//' tests/cat_tool.xml > no-id.xml
+      - "! python -c \"import sys; from galaxy.tool_util.lint import lint_tool_source; from galaxy.tool_util.parser import get_tool_source; sys.exit(not lint_tool_source(get_tool_source('no-id.xml')))\""
       - galaxy-tool-upgrade-advisor -p 20.09 tests/cat_tool.xml | grep -q "set -e"
+      - galaxy-tool-upgrade-advisor --json -p 20.09 tests/cat_tool.xml | python -c "import json, sys; assert '20_09_consider_set_e' in [a['name'] for a in json.load(sys.stdin)]"
       # The remaining scripts need docker, singularity or the network.
       - galaxy-tool-test --help
       - mulled-build --help
@@ -132,10 +143,9 @@ tests:
         --ignore=tests/tool_util/test_parsed_tool_model.py
         --ignore=tests/tool_util/test_parsing.py
         --ignore=tests/tool_util/test_test_definition_parsing.py
-        --ignore=tests/tool_util/test_tool_linters.py
         --ignore=tests/tool_util/test_user_tool_source_fixtures.py
         --ignore=tests/tool_util/upgrade/test_upgrade_advice.py
-        -k "not live and not singularity and not namespace_missing"
+        -k "not live and not singularity and not namespace_missing and not test_linting_cwl_tool and not test_linting_functional_tool_multi_select"
   - package_contents:
       strict: true
       site_packages:
