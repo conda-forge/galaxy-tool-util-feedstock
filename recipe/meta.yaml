@@ -21,6 +21,7 @@ build:
     - mulled-build-channel=galaxy.tool_util.deps.mulled.mulled_build_channel:main
     - mulled-build-files=galaxy.tool_util.deps.mulled.mulled_build_files:main
     - mulled-build-tool=galaxy.tool_util.deps.mulled.mulled_build_tool:main
+    - mulled-cache=galaxy.tool_util.deps.mulled.mulled_cache:main
     - mulled-hash=galaxy.tool_util.deps.mulled.mulled_hash:main
     - mulled-list=galaxy.tool_util.deps.mulled.mulled_list:main
     - mulled-recommend=galaxy.tool_util.deps.mulled.recommend:main
@@ -88,6 +89,7 @@ test:
     - validate-test-format --help
     - mulled-build --help
     - mulled-build-channel --help
+    - mulled-cache --help
     - mulled-hash --help
     - mulled-search --help
     # Temporarily disable test due to depot.galaxyproject.org "Read timed out" errors.
