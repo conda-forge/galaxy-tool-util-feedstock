@@ -1,5 +1,5 @@
-{% set version = "26.1.1" %}
-{% set sha256 = "92ab041c1388d11f35779a7db20464f3666f3c2b975e71bba84ca4c630ec99a1" %}
+{% set version = "26.1.2" %}
+{% set sha256 = "77aeb907b870294d8a9c2c91066e6afb1515a87decb1d09d787d118bd567f40e" %}
 {% set galaxy_version = version.split(".")[:2]|join(".") %}
 
 package:
@@ -7,12 +7,12 @@ package:
   version: {{ version }}
 
 source:
-  url: https://pypi.org/packages/source/g/galaxy-tool-util/galaxy_tool_util-{{ version }}.tar.gz
+  url: https://files.pythonhosted.org/packages/source/g/galaxy-tool-util/galaxy_tool_util-{{ version }}.tar.gz
   sha256: {{ sha256 }}
 
 build:
   noarch: python
-  number: 1
+  number: 0
   entry_points:
     - galaxy-tool-test=galaxy.tool_util.verify.script:main
     - galaxy-tool-test-case-validation=galaxy.tool_util.parameters.scripts.validate_test_cases:main
